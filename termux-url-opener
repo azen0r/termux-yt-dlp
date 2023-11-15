@@ -1,12 +1,12 @@
->#!/bin/bash
+#!/bin/bash
 clear
-url=$1
-dldir=/data/data/com.termux/files/home/storage/downloads/yt-dlp2
+URL=$1
+DLDIR=/data/data/com.termux/files/home/storage/downloads/yt-dlp2
 
 echo "downloading ur video..."
 echo ""
-[ ! -d "$dldir" ] && mkdir -pv "$dldir"
-yt-dlp --extractor-args "youtube:player_client=android" "$url" -o "$dldir/%(title)s [%(id)s].%(ext)s"
+[ ! -d "$DLDIR" ] && mkdir -pv "$DLDIR"
+yt-dlp --extractor-args "youtube:player_client=android" "$URL" -c -o "$DLDIR/%(title)s [%(id)s].%(ext)s" -R infinite --retry-sleep 3
 
-# shfmt -w /storage/emulated/0/yt-dlp/yt-dlp_termux_noconfirm.sh
-# cat /storage/emulated/0/yt-dlp/yt-dlp_termux_noconfirm.sh >$HOME/bin/termux-url-opener
+# shfmt -w /storage/emulated/0/termux-url-opener
+# cat /storage/emulated/0/termux-url-opener >$HOME/bin/termux-url-opener
