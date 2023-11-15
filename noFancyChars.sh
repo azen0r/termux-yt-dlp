@@ -1,61 +1,69 @@
 #!/bin/bash
-RUNDIR=${0%/*}
-cd "$RUNDIR"
 
+# Function to rename files with "fancy" characters
 fancy() {
-	for f in *\—*; do mv "$f" "${f//—/-}"; done
-	for f in *\–*; do mv "$f" "${f//—/-}"; done
-	for f in *\：*; do mv "$f" "${f//：/_}"; done
-	for f in \｜; do mv "$f" "${f//｜/I}"; done
-	for f in \│; do mv "$f" "${f//│/I}"; done
+	characters=(
+		"—" "-"
+		"–" "-"
+		"：" "_"
+		"｜" "I"
+		"│" "I"
+		"？" "_"
+		"¿" "_"
+		"‘" "_"
+		"’" "_"
+		"”" "_"
+		"“" "_"
+		"＂" "_"
+		"＊" "_"
+		"!" "_"
+		"‼" "_"
+		"⧸" "_"
+		"…" "..."
+		"🧠" "_"
+		"💡" "_"
+		"⬆" "_"
+		"🇬🇧" "_"
+		"📚" "_"
+		"🤔" "_"
+		"🎯" "_"
+		"✨" "_"
+		"💵" "_"
+		"⚡" "_"
+		"✏" "_"
+		"🙊" "_"
+		"💰" "_"
+		"😏" "_"
+	)
 
-	for f in *\？*; do mv "$f" "${f//？/_}"; done
-	for f in *\¿*; do mv "$f" "${f//¿/_}"; done
+	# Replace characters with their corresponding replacements
+	for ((i = 0; i < ${#characters[@]}; i += 2)); do
+		find . -name "*${characters[i]}*" -exec bash -c 'mv "$0" "${0//'"${characters[i]}"'/'"${characters[i + 1]}"'}"' {} \;
+	done
 
-	for f in *\‘*; do mv "$f" "${f//‘/_}"; done
-	for f in *\’*; do mv "$f" "${f//’/_}"; done
-	for f in *\”*; do mv "$f" "${f//”/_}"; done
-	for f in *\“*; do mv "$f" "${f//“/_}"; done
-	for f in *\＂*; do mv "$f" "${f//＂/_}"; done
+	# Replace single quotes with underscore
+	find . -name "*'*" -print0 | while IFS= read -r -d '' file; do
+		mv "$file" "${file//\'/_}"
+	done
 
-	for f in *\＊*; do mv "$f" "${f//＊/_}"; done
-
-	for f in *\!*; do mv "$f" "${f//!/_}"; done
-	for f in *\‼*; do mv "$f" "${f//‼/_}"; done
-	for f in \⧸; do mv "$f" "${f//⧸/_}"; done
-
-	for f in *\🧠*; do mv "$f" "${f//🧠/_}"; done
-	for f in *\💡*; do mv "$f" "${f//💡/_}"; done
-	for f in *\⬆*; do mv "$f" "${f//⬆/_}"; done
-	for f in *\🇬🇧*; do mv "$f" "${f//🇬🇧/_}"; done
-	for f in *\📚*; do mv "$f" "${f//📚/_}"; done
-	for f in *\🤔*; do mv "$f" "${f//🤔/_}"; done
-	for f in *\🎯*; do mv "$f" "${f//🎯/_}"; done
-	for f in *\✨*; do mv "$f" "${f//✨/_}"; done
-	for f in *\💵*; do mv "$f" "${f//💵/_}"; done
-	for f in *\⚡*; do mv "$f" "${f//⚡/_}"; done
-	for f in *\✏*; do mv "$f" "${f//✏/_}"; done
-	for f in *\🙊*; do mv "$f" "${f//🙊/_}"; done
-	for f in *\💰*; do mv "$f" "${f//💰/_}"; done
-	for f in *\😏*; do mv "$f" "${f//😏/_}"; done
-
-	# 🤔✨🎯📚💵⚡✏
-
-	find . -name "*'*" -print0 | while IFS= read -r -d '' file; do mv "$file" "${file//\'/_}"; done
-	find . -name "*|*" -print0 | while IFS= read -r -d '' file; do mv "$file" "${file//\|/I}"; done
+	# Replace pipe character with capital letter I
+	find . -name "*|*" -print0 | while IFS= read -r -d '' file; do
+		mv "$file" "${file//\|/I}"
+	done
 }
 
-cd /sdcard/Download/yt-dlp2/
-fancy
-for d in /sdcard/yt-dlp2/*/; do (cd "$d" && fancy); done
-for d in /sdcard/yt-dlp2/*/*/; do (cd "$d" && fancy); done
+# Directories to process
+directories=(
+	"/sdcard/Download/yt-dlp2/"
+	"/sdcard/yt-dlp/"
+	"/sdcard/yt-dlp3/"
+)
 
-cd /sdcard/yt-dlp/
-fancy
-for d in /sdcard/yt-dlp/*/; do (cd "$d" && fancy); done
-for d in /sdcard/yt-dlp/*/*/; do (cd "$d" && fancy); done
-
-cd /sdcard/yt-dlp3/
-fancy
-for d in /sdcard/yt-dlp3/*/; do (cd "$d" && fancy); done
-for d in /sdcard/yt-dlp3/*/*/; do (cd "$d" && fancy); done
+# Process directories and their subdirectories
+for directory in "${directories[@]}"; do
+	cd "$directory"
+	fancy
+	for subdirectory in */; do
+		(cd "$subdirectory" && fancy)
+	done
+done
